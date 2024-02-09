@@ -1,0 +1,434 @@
+---
+title: "Odds of Injury Against an NBA Player's Weight and Height" 
+format: html
+editor: visual
+names: Noah Kalvelage, Aneesh Batra, Shreyans Gupta
+---
+
+# **Introduction**
+
+The National Basketball Association (NBA) stands as one of the biggest and most renowned sports organizations globally, boasting staggering revenues exceeding \$10 billion USD in the 2022-2023 season and captivating an average of 1.7 million viewers per broadcast. Yet, the league grapples with a persistent challenge: injuries. Over recent seasons, the NBA has witnessed a concerning uptick in injury rates, fluctuating between 12.4% and 15%.
+
+The evolving landscape of professional basketball has introduced a diverse array of physical specimens onto the court. From the arrival of Chet Holmgren (7'1", 207 lbs) drafted by the Oklahoma City Thunder in 2022 to the more recent acquisition of Victor Wembanyama (7'4", 209 lbs) by the San Antonio Spurs in 2023, the NBA has seen an influx of players with remarkable height and wingspan. While these athletes bring an unprecedented combination of size, athleticism and skill to the game, their unique physical attributes raise intriguing questions about their susceptibility to injury.
+
+Motivated by the emergence of such players and the concerning trend of rising injury rates, we sought to analyze the correlation and potential causation between player height, weight, and injury risk. Central to our investigation is the examination of the most prevalent injuries afflicting NBA players, with a keen focus on knee, ankle, and back ailments. 
+
+Player health and availability has been an especially central concern in the NBA as of recently, with the league most recently adding rules requiring players to play 65 out of 82 games to be eligible for postseason awards such as MVP and All-NBA. Thus, delving into the physical attributes that make injury more or less likely will have implications when considering who the best and most awarded players in the league are. 
+
+Through our statistical analysis, we hope to predict which players will be more susceptible to different types of injuries based on their height and weight.
+
+```{r}
+library(tidyverse)
+library(ggplot2)
+library(knitr)
+library(dplyr)
+library(tidyr)
+library(tibble)
+```
+
+```{r}
+# Set the buffer size
+Sys.setenv(VROOM_CONNECTION_SIZE = "10000000000Mb")
+
+
+# Load the dataset
+url1 <- "https://github.com/shreyans09/DSAC-Fall-2023-Injury-Analysis/raw/main/NBAI_filtered.csv"
+NBAI_filtered <- read.csv(url1)
+
+url2 <- "https://github.com/shreyans09/DSAC-Fall-2023-Injury-Analysis/raw/main/players.csv" 
+players <- read.csv(url2)
+
+
+```
+
+```{r}
+#| label: 
+
+NBAI_filtered <- NBAI_filtered |>
+  mutate(frequent_injury = case_when(Injury == "knee" ~ "1",
+                                     Injury == "back" ~ "2",
+                                     Injury == "ankle" ~ "3"))
+NBAI_filtered <- na.omit(NBAI_filtered)
+
+```
+
+# Data
+
+Our analysis used two different datasets which were cleaned and combined into one final dataset. The first dataset was found on [Kaggle](https://www.kaggle.com/datasets/loganlauton/nba-injury-stats-1951-2023), which provided NBA injury statistics from 1951-2023. These statistics were gathered from [Pro Sports Transactions](https://www.prosportstransactions.com/basketball/Search/SearchResults.php?Player=&Team=&BeginDate=&EndDate=&ILChkBx=yes&Submit=Search). 
+
+\
+The second dataset was a comprehensive list of all NBA players in history and their heights (in centimeters) and weight (in kilograms) taken from [Basketball Reference](https://www.basketball-reference.com/).
+
+# Data Cleaning
+
+The first dataset was cleaned to include only injuries starting in 1990, the year the flagrant foul was introduced into the NBA rulebook. This was one of the major rules focused on reducing injuries and promoting player safety. 
+
+The dataset was further cleaned to include only injuries of the knee, ankle, and back variety. These were determined to be by far the most prevalent issues and the most likely to be related to height and weight. Illnesses and less common injuries were filtered out. 
+
+These processes led to a dataset including all knee, ankle, and back injuries from the 1990 season to the 2023 season. 
+
+This dataset was then merged with the player dataset of all NBA players in history by unique player name and their corresponding heights and weights. From that dataset, the amount of injuries of the knee, ankle, and back variety that each player received was calculated. This merged dataset was then condensed to list each player that had been injured at some point from 1990-2023, what type of injury they received, how many times they received that injury, and their height and weight. Finally, within that dataset, the average number of knee, ankle and back injuries by each height and each weight was calculated. This is the final dataset that was used for visualizations.
+
+```{r}
+ggplot(NBAI_filtered, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+lebron_injuries <- NBAI_filtered |>
+  filter(Player == "LeBron James")
+ggplot(lebron_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Lebron James' Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+shaq_injuries <- NBAI_filtered |>
+  filter(Player == "Shaquille O'Neal")
+ggplot(shaq_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Shaquille O'Neal's Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+kd_injuries <- NBAI_filtered |>
+  filter(Player == "Kevin Durant")
+ggplot(kd_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Kevin Durant's Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+ai_injuries <- NBAI_filtered |>
+  filter(Player == "Allen Iverson")
+ggplot(ai_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Allen Iverson's Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+brogdon_injuries <- NBAI_filtered |>
+  filter(Player == "Malcolm Brogdon")
+ggplot(brogdon_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Malcolm Brogdon's Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+jeff_green_injuries <- NBAI_filtered |>
+  filter(Player == "Jeff Green")
+ggplot(jeff_green_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Jeff Green's Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+brook_lopez_injuries <- NBAI_filtered |>
+  filter(Player == "Brook Lopez")
+ggplot(brook_lopez_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Brook Lopez's Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+```{r}
+rip_hamilton_injuries <- NBAI_filtered |>
+  filter(Player == "Richard Hamilton")
+ggplot(rip_hamilton_injuries, aes(x = frequent_injury)) +
+  geom_bar() +
+  labs(title = "Rip Hamilton's Distribution of Injury Frequency",
+       x = "Injury",
+       Y = "Frequency")
+```
+
+# **Exploratory Data Analysis**
+
+To begin our analysis, we looked at individual players and their injury histories. We considered players of varying positions, heights, and weights to hopefully gain insight into what positions and body types led to different injuries. For this initial analysis, we looked at Allen Iverson, Malcolm Brogdon, Brook Lopez, Jeff Green, Kevin Durant, Lebron James, Richard Hamilton, and Shaquille O'Neal. These players all have different builds and were chosen based on long careers that provided enough injury history to identify trends. 
+
+Our initial analysis of these players showed that guards (typically shorter players) tended to suffer more from back injuries, while forwards (typically tall and not heavy for their height) were suffering most from ankle injuries. Across all positions and sizes, knee injuries were the most common. 
+
+In the 34 year period we examined, there were 1,381 knee injuries. Comparatively, there were 1,027 ankle injuries and 699 back injuries.
+
+```{r}
+names_with_frequency <- data.frame(NBAI_filtered)
+
+# Create a new data frame with unique names and their frequencies
+unique_names_NBAI <- NBAI_filtered %>%
+  group_by(Player) %>%
+  summarise(freq = n())
+```
+
+```{r}
+NBAI_final <- merge(names_with_frequency, unique_names_NBAI, by = "Player")
+```
+
+```{r}
+merged_data <- left_join(NBAI_final, players, by = 'Player')
+```
+
+```{r}
+calculate_injury_frequencies <- function(injury_data) {
+  injury_types <- c('knee', 'ankle', 'back')
+  frequencies <- sapply(injury_types, function(injury_type) {
+    sum(grepl(injury_type, injury_data$Injury, ignore.case = TRUE))
+  })
+  names(frequencies) <- paste0(injury_types, '_frequency')
+  return(frequencies)
+}
+
+```
+
+```{r}
+merged_data <- merged_data %>%
+  group_by(Player) %>%
+  mutate(
+    knee_frequency = sum(Injury == "knee", na.rm = TRUE),
+    back_frequency = sum(Injury == "back", na.rm = TRUE),
+    ankle_frequency = sum(Injury == "ankle", na.rm = TRUE)
+  )
+```
+
+```{r}
+final_dataset <- merged_data |>
+  group_by(Player) |>
+  summarize (knee_count = min(knee_frequency),
+             back_count = min(back_frequency),
+             ankle_count = min(ankle_frequency),
+             height..cm = min(height..cm.),
+             weight..kg. = (min(weight..kg.))
+             )
+```
+
+```{r}
+final_dataset$height..cm <- as.numeric(as.character(final_dataset$height..cm))
+final_dataset$weight..kg. <- as.numeric(as.character(final_dataset$weight..kg.))
+```
+
+```{r}
+final_dataset <- final_dataset %>%
+  na.omit() %>%
+  group_by(height..cm) %>%
+  mutate(average_knee_injuries_by_height = mean(knee_count, na.rm = TRUE))
+```
+
+```{r}
+final_dataset <- final_dataset %>%
+  group_by(height..cm) %>%
+  mutate(average_ankle_injuries_by_height = mean(ankle_count, na.rm = TRUE))
+```
+
+```{r}
+final_dataset <- final_dataset %>%
+  group_by(height..cm) %>%
+  mutate(average_back_injuries_by_height = mean(back_count, na.rm = TRUE))
+```
+
+```{r}
+final_dataset <- final_dataset %>%
+  group_by(weight..kg.) %>%
+  mutate(average_knee_injuries_by_weight = mean(knee_count, na.rm = TRUE))
+```
+
+```{r}
+final_dataset <- final_dataset %>%
+  group_by(weight..kg.) %>%
+  mutate(average_ankle_injuries_by_weight = mean(ankle_count, na.rm = TRUE))
+```
+
+```{r}
+final_dataset <- final_dataset %>%
+  group_by(weight..kg.) %>%
+  mutate(average_back_injuries_by_weight = mean(back_count, na.rm = TRUE))
+```
+
+# Models and Interpretation
+
+```{r}
+ggplot(final_dataset, aes(x = weight..kg., y = average_ankle_injuries_by_weight)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  ggtitle("Average Ankle Injuries by Weight") +
+  xlab("Weight (kg") +
+  ylab("Average Number of Ankle Injuries by Height")
+```
+
+```{r}
+# Fit a linear regression model
+lm_model <- lm(average_ankle_injuries_by_weight ~ weight..kg., data = final_dataset)
+
+# Extract the slope coefficient
+slope <- coef(lm_model)["weight..kg."]
+
+# Print the slope coefficient
+print(paste("Slope of the trendline:", slope))
+```
+
+The graph presented indicates a subtle but discernible weak negative correlation between weight and the occurrence of ankle injuries among NBA players. This inverse relationship suggests that as the weight of players increases, there is a tendency for a decrease in the frequency of ankle injuries. Several factors might contribute to this intriguing correlation. Firstly, players with higher body weight may possess greater muscle mass and strength, which could provide enhanced stability and support to the ankle joints during dynamic movements on the basketball court, reducing the likelihood of injuries. Additionally, heavier players adopt playing styles or positions that involve less stress on the ankles, contributing to a lower incidence of injuries. Understanding this correlation is vital for developing targeted injury prevention strategies and training programs tailored to the unique physical characteristics of NBA players, ultimately fostering their overall well-being and on-court performance.
+
+```{r}
+ggplot(final_dataset, aes(x = height..cm, y = average_ankle_injuries_by_height)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  ggtitle("Average Ankle Injuries by Height") +
+  xlab("Height (cm)") +
+  ylab("Average Number of Ankle Injuries")
+```
+
+```{r}
+# Fit a linear regression model
+lm_model <- lm(average_ankle_injuries_by_height ~ height..cm, data = final_dataset)
+
+# Extract the slope coefficient
+slope <- coef(lm_model)["height..cm"]
+
+# Print the slope coefficient
+print(paste("Slope of the trendline:", slope))
+
+```
+
+The graph depicted indicates a subtle and weak negative correlation between height and the incidence of ankle injuries among NBA players. This implies that as player height increases, there is a slight decrease in the likelihood of experiencing ankle injuries. Several factors may contribute to this observed correlation. Taller players often possess longer limbs and may employ a playing style that involves greater spatial awareness and control over their movements, potentially reducing the risk of sudden ankle injuries. Additionally, taller players might have a different distribution of body weight, affecting their balance and stability during dynamic actions on the basketball court. The findings suggest that understanding the relationship between height and ankle injuries is crucial for tailoring injury prevention strategies, training programs, and rehabilitation protocols to address the distinct physical attributes and potential risks associated with taller NBA players, contributing to their overall well-being and performance on the court.
+
+```{r}
+ggplot(final_dataset, aes(x = height..cm, y = average_back_injuries_by_height)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  ggtitle("Average Back Injuries by Height") +
+  xlab("Height (cm)") +
+  ylab("Average Number of Back Injuries")
+```
+
+```{r}
+# Fit a linear regression model
+lm_model <- lm(average_back_injuries_by_height ~ height..cm, data = final_dataset)
+
+# Extract the slope coefficient
+slope <- coef(lm_model)["height..cm"]
+
+# Print the slope coefficient
+print(paste("Slope of the trendline:", slope))
+```
+
+The depicted graph reveals a noteworthy positive correlation between height and the occurrence of back injuries within the context of NBA players. This association could be attributed to several factors unique to the sport and the physical demands placed on basketball players, particularly those with greater height. Firstly, taller NBA players often engage in intense physical activities, such as jumping, dunking, and blocking shots, which can subject their spines to increased stress and impact, potentially leading to a higher susceptibility to back injuries. Moreover, the height-related biomechanics and playing style may contribute to altered postures and increased pressure on the spinal column, amplifying the risk of back-related issues. The findings from this correlation emphasize the importance of tailored injury prevention strategies, specialized training regimens, and individualized healthcare protocols for NBA players, taking into account their specific physical attributes and the demands of the sport to ensure prolonged and optimal athletic performance.
+
+```{r}
+ggplot(final_dataset, aes(x = weight..kg., y = average_back_injuries_by_weight)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  ggtitle("Average Back Injuries by Weight") +
+  xlab("Weight (kg") +
+  ylab("Average Number of Back Injuries by Height")
+```
+
+```{r}
+# Fit a linear regression model
+lm_model <- lm(average_back_injuries_by_weight ~ weight..kg., data = final_dataset)
+
+# Extract the slope coefficient
+slope <- coef(lm_model)["weight..kg."]
+
+# Print the slope coefficient
+print(paste("Slope of the trendline:", slope))
+```
+
+The graph above reveals a notable positive correlation between weight and the occurrence of back injuries among NBA players. This association implies that as player weight increases, there is a corresponding increase in the likelihood of experiencing back injuries. Several factors may contribute to this observed correlation. Firstly, players with higher body weight may experience greater stress on their spine due to the increased load and forces exerted during dynamic movements inherent to basketball. The additional weight could potentially strain the lower back, leading to a higher incidence of injuries. Furthermore, the playing style of heavier players or the positions they occupy on the court may involve actions that put additional strain on the back, exacerbating the correlation. Recognizing this positive association is crucial for developing targeted injury prevention strategies, customized training regimens, and healthcare interventions to address the specific challenges posed by increased weight and reduce the risk of back injuries in NBA players.
+
+```{r}
+ggplot(final_dataset, aes(x = weight..kg., y = average_knee_injuries_by_weight)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  ggtitle("Average Knee Injuries by Weight") +
+  xlab("Weight (kg") +
+  ylab("Average Number of Knee Injuries by Height")
+```
+
+```{r}
+# Fit a linear regression model
+lm_model <- lm(average_knee_injuries_by_weight ~ weight..kg., data = final_dataset)
+
+# Extract the slope coefficient
+slope <- coef(lm_model)["weight..kg."]
+
+# Print the slope coefficient
+print(paste("Slope of the trendline:", slope))
+```
+
+The graph above unveils a conspicuous positive correlation between player weight and the occurrence of knee injuries in the NBA. This correlation implies that as the weight of players increases, there is a corresponding escalation in the likelihood of sustaining knee injuries. Several possible factors contribute to this observed correlation. Firstly, the additional weight carried by players may lead to heightened biomechanical stress on the knee joints during various high-impact movements inherent to basketball, such as cutting, jumping, and rapid changes in direction. This increased stress can contribute to a higher susceptibility to knee injuries. Additionally, players with greater body weight may have different movement patterns or playing styles that expose their knees to increased forces or awkward positions, increasing the risk of injury. Recognizing this positive correlation is pivotal for devising targeted injury prevention strategies, implementing weight management programs, and developing rehabilitation protocols tailored to address the specific challenges associated with increased weight among NBA players, ultimately promoting their overall well-being and longevity in the sport.
+
+```{r}
+
+ggplot(final_dataset, aes(x = height..cm, y = average_knee_injuries_by_height)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  ggtitle("Average Knee Injuries by Height") +
+  xlab("Height (cm)") +
+  ylab("Average Number of Knee Injuries")
+```
+
+```{r}
+# Fit a linear regression model
+lm_model <- lm(average_knee_injuries_by_height ~ height..cm, data = final_dataset)
+
+# Extract the slope coefficient
+slope <- coef(lm_model)["height..cm"]
+
+# Print the slope coefficient
+print(paste("Slope of the trendline:", slope))
+```
+
+The graph above illustrates a noteworthy positive correlation between height and the occurrence of knee injuries among NBA players. This connection suggests that as player height increases, there is an associated rise in the likelihood of experiencing knee injuries. Several factors may contribute to this observed correlation. Taller players often carry additional weight and may undergo increased biomechanical stress on their knee joints during dynamic movements like running, jumping, and pivoting, which are integral to basketball. The heightened forces exerted on the knees, combined with the potentially altered biomechanics of taller individuals, could contribute to an elevated risk of knee injuries. Furthermore, the playing style and positions of taller players may involve specific actions that put additional strain on the knee joints. Recognizing and understanding this positive correlation is crucial for the development of targeted injury prevention strategies, customized training programs, and rehabilitation protocols tailored to the unique challenges presented by increased height among NBA players, ultimately contributing to their overall health and performance on the court.
+
+# Conclusion
+
+```{r}
+slope_table <- data.frame(Graph = character(), Slope = numeric(), stringsAsFactors = FALSE)
+
+# Fit linear regression models and extract slopes for each graph
+graph_names <- c("Back Injuries by Weight", "Knee Injuries by Weight", "Knee Injuries by Height", "Back Injuries by Height", "Ankle Injuries by Weight", "Ankle Injuries by Height")
+x_vars <- c("weight..kg.", "weight..kg.", "height..cm", "height..cm", "weight..kg.", "height..cm")
+y_vars <- c("average_back_injuries_by_weight", "average_knee_injuries_by_weight", "average_knee_injuries_by_height", "average_back_injuries_by_height", "average_ankle_injuries_by_weight", "average_ankle_injuries_by_height")
+
+for (i in 1:length(graph_names)) {
+  # Fit linear regression model
+  lm_model <- lm(get(y_vars[i]) ~ get(x_vars[i]), data = final_dataset)
+  
+  # Extract the slope coefficient
+  slope <- coef(lm_model)[2]  # Slope coefficient is the second coefficient
+  
+  # Add slope to the dataframe
+  slope_table <- rbind(slope_table, data.frame(Graph = graph_names[i], Slope = slope))
+}
+# Print the slope table
+print(slope_table)
+```
+
+1.  **Back Injuries by Weight**: The positive slope value of approximately 0.00597 suggests that for every unit increase in weight (measured in kilograms), there is a corresponding increase in the average number of back injuries by approximately 0.00597. This indicates a positive relationship between weight and back injuries, where higher weight may lead to a higher average number of back injuries.
+
+2.  **Knee Injuries by Weight**: With a positive slope value of approximately 0.00236, it suggests that for every unit increase in weight (measured in kilograms), there is a corresponding increase in the average number of knee injuries by approximately 0.00236. This also indicates a positive relationship between weight and knee injuries, though the effect size is smaller compared to back injuries.
+
+3.  **Knee Injuries by Height**: The positive slope value of approximately 0.00466 indicates that for every unit increase in height (measured in centimeters), there is a corresponding increase in the average number of knee injuries by approximately 0.00466. This suggests a positive relationship between height and knee injuries, where taller individuals may experience a higher average number of knee injuries.
+
+4.  **Back Injuries by Height**: Similarly, the positive slope value of approximately 0.00918 indicates that for every unit increase in height (measured in centimeters), there is a corresponding increase in the average number of back injuries by approximately 0.00918. This indicates a positive relationship between height and back injuries, where taller individuals may experience a higher average number of back injuries.
+
+5.  **Ankle Injuries by Weight**: The negative slope value of approximately -0.00080 suggests that for every unit increase in weight (measured in kilograms), there is a corresponding decrease in the average number of ankle injuries by approximately 0.00080. This indicates a negative relationship between weight and ankle injuries, where higher weight may lead to a lower average number of ankle injuries.
+
+6.  **Ankle Injuries by Height**: The negative slope value of approximately -0.00302 suggests that for every unit increase in height (measured in centimeters), there is a corresponding decrease in the average number of ankle injuries by approximately 0.00302. This also indicates a negative relationship between height and ankle injuries, where taller individuals may experience a lower average number of ankle injuries.
+
+In conclusion, the findings from this sports analytics project provide valuable insights into the relationships between player height, weight, and the occurrence of back, ankle, and knee injuries among NBA players. The positive correlations between height and back/knee injuries, as well as weight and back/knee injuries, underscore the importance of addressing the unique biomechanical stresses and playing styles associated with taller and heavier players. Conversely, the subtle negative correlations between height and ankle injuries, and weight and ankle injuries, highlight potential advantages in terms of injury susceptibility for taller and heavier players in this specific context.
+
+These insights emphasize the necessity of tailored injury prevention strategies, specialized training regimens, and individualized healthcare protocols for NBA players, taking into account their specific physical attributes and the demands of the sport. By understanding the nuanced relationships between player characteristics and injury risk, teams can develop proactive approaches to mitigate injuries, optimize player performance, and promote long-term health and well-being in the competitive world of professional basketball. This project lays a foundation for further research and practical applications aimed at enhancing player safety and performance in the NBA and beyond.
