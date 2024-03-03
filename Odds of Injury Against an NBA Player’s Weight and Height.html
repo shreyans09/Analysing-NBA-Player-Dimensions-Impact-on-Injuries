@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0022)http://localhost:6156/ -->
+<!-- saved from url=(0022)http://localhost:7260/ -->
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 
@@ -103,7 +103,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Player health and availability has been an especially central concern in the NBA as of recently, with the league most recently adding rules requiring players to play 65 out of 82 games to be eligible for postseason awards such as MVP and All-NBA. Thus, delving into the physical attributes that make injury more or less likely will have implications when considering who the best and most awarded players in the league are.&nbsp;</p>
 <p>Through our statistical analysis, we hope to predict which players will be more susceptible to different types of injuries based on their height and weight.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="http://localhost:6156/#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="http://localhost:7260/#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
 ✔ dplyr     1.1.3     ✔ readr     2.1.4
@@ -116,30 +116,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 ✖ dplyr::lag()    masks stats::lag()
 ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="http://localhost:6156/#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
-<span id="cb3-2"><a href="http://localhost:6156/#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
-<span id="cb3-3"><a href="http://localhost:6156/#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
-<span id="cb3-4"><a href="http://localhost:6156/#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
-<span id="cb3-5"><a href="http://localhost:6156/#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="http://localhost:7260/#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb3-2"><a href="http://localhost:7260/#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb3-3"><a href="http://localhost:7260/#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb3-4"><a href="http://localhost:7260/#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb3-5"><a href="http://localhost:7260/#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="http://localhost:6156/#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the buffer size</span></span>
-<span id="cb4-2"><a href="http://localhost:6156/#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">VROOM_CONNECTION_SIZE =</span> <span class="st">"10000000000Mb"</span>)</span>
-<span id="cb4-3"><a href="http://localhost:6156/#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="http://localhost:6156/#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="http://localhost:6156/#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the dataset</span></span>
-<span id="cb4-6"><a href="http://localhost:6156/#cb4-6" aria-hidden="true" tabindex="-1"></a>url1 <span class="ot">&lt;-</span> <span class="st">"https://github.com/shreyans09/DSAC-Fall-2023-Injury-Analysis/raw/main/NBAI_filtered.csv"</span></span>
-<span id="cb4-7"><a href="http://localhost:6156/#cb4-7" aria-hidden="true" tabindex="-1"></a>NBAI_filtered <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(url1)</span>
-<span id="cb4-8"><a href="http://localhost:6156/#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="http://localhost:6156/#cb4-9" aria-hidden="true" tabindex="-1"></a>url2 <span class="ot">&lt;-</span> <span class="st">"https://github.com/shreyans09/DSAC-Fall-2023-Injury-Analysis/raw/main/players.csv"</span> </span>
-<span id="cb4-10"><a href="http://localhost:6156/#cb4-10" aria-hidden="true" tabindex="-1"></a>players <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(url2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="http://localhost:7260/#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Set the buffer size</span></span>
+<span id="cb4-2"><a href="http://localhost:7260/#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">Sys.setenv</span>(<span class="at">VROOM_CONNECTION_SIZE =</span> <span class="st">"10000000000Mb"</span>)</span>
+<span id="cb4-3"><a href="http://localhost:7260/#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="http://localhost:7260/#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="http://localhost:7260/#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the dataset</span></span>
+<span id="cb4-6"><a href="http://localhost:7260/#cb4-6" aria-hidden="true" tabindex="-1"></a>url1 <span class="ot">&lt;-</span> <span class="st">"https://github.com/shreyans09/DSAC-Fall-2023-Injury-Analysis/raw/main/NBAI_filtered.csv"</span></span>
+<span id="cb4-7"><a href="http://localhost:7260/#cb4-7" aria-hidden="true" tabindex="-1"></a>NBAI_filtered <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(url1)</span>
+<span id="cb4-8"><a href="http://localhost:7260/#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="http://localhost:7260/#cb4-9" aria-hidden="true" tabindex="-1"></a>url2 <span class="ot">&lt;-</span> <span class="st">"https://github.com/shreyans09/DSAC-Fall-2023-Injury-Analysis/raw/main/players.csv"</span> </span>
+<span id="cb4-10"><a href="http://localhost:7260/#cb4-10" aria-hidden="true" tabindex="-1"></a>players <span class="ot">&lt;-</span> <span class="fu">read.csv</span>(url2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="http://localhost:6156/#cb5-1" aria-hidden="true" tabindex="-1"></a>NBAI_filtered <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb5-2"><a href="http://localhost:6156/#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">frequent_injury =</span> <span class="fu">case_when</span>(Injury <span class="sc">==</span> <span class="st">"knee"</span> <span class="sc">~</span> <span class="st">"1"</span>,</span>
-<span id="cb5-3"><a href="http://localhost:6156/#cb5-3" aria-hidden="true" tabindex="-1"></a>                                     Injury <span class="sc">==</span> <span class="st">"back"</span> <span class="sc">~</span> <span class="st">"2"</span>,</span>
-<span id="cb5-4"><a href="http://localhost:6156/#cb5-4" aria-hidden="true" tabindex="-1"></a>                                     Injury <span class="sc">==</span> <span class="st">"ankle"</span> <span class="sc">~</span> <span class="st">"3"</span>))</span>
-<span id="cb5-5"><a href="http://localhost:6156/#cb5-5" aria-hidden="true" tabindex="-1"></a>NBAI_filtered <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(NBAI_filtered)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="http://localhost:7260/#cb5-1" aria-hidden="true" tabindex="-1"></a>NBAI_filtered <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="http://localhost:7260/#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">frequent_injury =</span> <span class="fu">case_when</span>(Injury <span class="sc">==</span> <span class="st">"knee"</span> <span class="sc">~</span> <span class="st">"1"</span>,</span>
+<span id="cb5-3"><a href="http://localhost:7260/#cb5-3" aria-hidden="true" tabindex="-1"></a>                                     Injury <span class="sc">==</span> <span class="st">"back"</span> <span class="sc">~</span> <span class="st">"2"</span>,</span>
+<span id="cb5-4"><a href="http://localhost:7260/#cb5-4" aria-hidden="true" tabindex="-1"></a>                                     Injury <span class="sc">==</span> <span class="st">"ankle"</span> <span class="sc">~</span> <span class="st">"3"</span>))</span>
+<span id="cb5-5"><a href="http://localhost:7260/#cb5-5" aria-hidden="true" tabindex="-1"></a>NBAI_filtered <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(NBAI_filtered)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="data" class="level1">
@@ -155,111 +155,111 @@ The second dataset was a comprehensive list of all NBA players in history and th
 <p>These processes led to a dataset including all knee, ankle, and back injuries from the 1990 season to the 2023 season.&nbsp;</p>
 <p>This dataset was then merged with the player dataset of all NBA players in history by unique player name and their corresponding heights and weights. From that dataset, the amount of injuries of the knee, ankle, and back variety that each player received was calculated. This merged dataset was then condensed to list each player that had been injured at some point from 1990-2023, what type of injury they received, how many times they received that injury, and their height and weight. Finally, within that dataset, the average number of knee, ankle and back injuries by each height and each weight was calculated. This is the final dataset that was used for visualizations.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="http://localhost:6156/#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove leading and trailing whitespace from Player column</span></span>
-<span id="cb6-2"><a href="http://localhost:6156/#cb6-2" aria-hidden="true" tabindex="-1"></a>NBAI_filtered<span class="sc">$</span>Player <span class="ot">&lt;-</span> <span class="fu">trimws</span>(NBAI_filtered<span class="sc">$</span>Player)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="http://localhost:7260/#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove leading and trailing whitespace from Player column</span></span>
+<span id="cb6-2"><a href="http://localhost:7260/#cb6-2" aria-hidden="true" tabindex="-1"></a>NBAI_filtered<span class="sc">$</span>Player <span class="ot">&lt;-</span> <span class="fu">trimws</span>(NBAI_filtered<span class="sc">$</span>Player)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="http://localhost:6156/#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(NBAI_filtered, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb7-2"><a href="http://localhost:6156/#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb7-3"><a href="http://localhost:6156/#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Injury Frequency"</span>,</span>
-<span id="cb7-4"><a href="http://localhost:6156/#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb7-5"><a href="http://localhost:6156/#cb7-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="http://localhost:7260/#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(NBAI_filtered, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="http://localhost:7260/#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb7-3"><a href="http://localhost:7260/#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Distribution of Injury Frequency"</span>,</span>
+<span id="cb7-4"><a href="http://localhost:7260/#cb7-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb7-5"><a href="http://localhost:7260/#cb7-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="http://localhost:6156/#cb8-1" aria-hidden="true" tabindex="-1"></a>lebron_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="http://localhost:6156/#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"LeBron James"</span>)</span>
-<span id="cb8-3"><a href="http://localhost:6156/#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lebron_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb8-4"><a href="http://localhost:6156/#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb8-5"><a href="http://localhost:6156/#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Lebron James' Distribution of Injury Frequency"</span>,</span>
-<span id="cb8-6"><a href="http://localhost:6156/#cb8-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb8-7"><a href="http://localhost:6156/#cb8-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="http://localhost:7260/#cb8-1" aria-hidden="true" tabindex="-1"></a>lebron_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="http://localhost:7260/#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"LeBron James"</span>)</span>
+<span id="cb8-3"><a href="http://localhost:7260/#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(lebron_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb8-4"><a href="http://localhost:7260/#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb8-5"><a href="http://localhost:7260/#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Lebron James' Distribution of Injury Frequency"</span>,</span>
+<span id="cb8-6"><a href="http://localhost:7260/#cb8-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb8-7"><a href="http://localhost:7260/#cb8-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-6-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="http://localhost:6156/#cb9-1" aria-hidden="true" tabindex="-1"></a>shaq_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb9-2"><a href="http://localhost:6156/#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Shaquille O'Neal"</span>)</span>
-<span id="cb9-3"><a href="http://localhost:6156/#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(shaq_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb9-4"><a href="http://localhost:6156/#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb9-5"><a href="http://localhost:6156/#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Shaquille O'Neal's Distribution of Injury Frequency"</span>,</span>
-<span id="cb9-6"><a href="http://localhost:6156/#cb9-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb9-7"><a href="http://localhost:6156/#cb9-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="http://localhost:7260/#cb9-1" aria-hidden="true" tabindex="-1"></a>shaq_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="http://localhost:7260/#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Shaquille O'Neal"</span>)</span>
+<span id="cb9-3"><a href="http://localhost:7260/#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(shaq_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb9-4"><a href="http://localhost:7260/#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb9-5"><a href="http://localhost:7260/#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Shaquille O'Neal's Distribution of Injury Frequency"</span>,</span>
+<span id="cb9-6"><a href="http://localhost:7260/#cb9-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb9-7"><a href="http://localhost:7260/#cb9-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="http://localhost:6156/#cb10-1" aria-hidden="true" tabindex="-1"></a>kd_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="http://localhost:6156/#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Kevin Durant"</span>)</span>
-<span id="cb10-3"><a href="http://localhost:6156/#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(kd_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb10-4"><a href="http://localhost:6156/#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb10-5"><a href="http://localhost:6156/#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Kevin Durant's Distribution of Injury Frequency"</span>,</span>
-<span id="cb10-6"><a href="http://localhost:6156/#cb10-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb10-7"><a href="http://localhost:6156/#cb10-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="http://localhost:7260/#cb10-1" aria-hidden="true" tabindex="-1"></a>kd_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="http://localhost:7260/#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Kevin Durant"</span>)</span>
+<span id="cb10-3"><a href="http://localhost:7260/#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(kd_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb10-4"><a href="http://localhost:7260/#cb10-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb10-5"><a href="http://localhost:7260/#cb10-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Kevin Durant's Distribution of Injury Frequency"</span>,</span>
+<span id="cb10-6"><a href="http://localhost:7260/#cb10-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb10-7"><a href="http://localhost:7260/#cb10-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-8-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="http://localhost:6156/#cb11-1" aria-hidden="true" tabindex="-1"></a>ai_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="http://localhost:6156/#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Allen Iverson"</span>)</span>
-<span id="cb11-3"><a href="http://localhost:6156/#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ai_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb11-4"><a href="http://localhost:6156/#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb11-5"><a href="http://localhost:6156/#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Allen Iverson's Distribution of Injury Frequency"</span>,</span>
-<span id="cb11-6"><a href="http://localhost:6156/#cb11-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb11-7"><a href="http://localhost:6156/#cb11-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="http://localhost:7260/#cb11-1" aria-hidden="true" tabindex="-1"></a>ai_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="http://localhost:7260/#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Allen Iverson"</span>)</span>
+<span id="cb11-3"><a href="http://localhost:7260/#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(ai_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb11-4"><a href="http://localhost:7260/#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb11-5"><a href="http://localhost:7260/#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Allen Iverson's Distribution of Injury Frequency"</span>,</span>
+<span id="cb11-6"><a href="http://localhost:7260/#cb11-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb11-7"><a href="http://localhost:7260/#cb11-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-9-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="http://localhost:6156/#cb12-1" aria-hidden="true" tabindex="-1"></a>brogdon_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="http://localhost:6156/#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Malcolm Brogdon"</span>)</span>
-<span id="cb12-3"><a href="http://localhost:6156/#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(brogdon_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb12-4"><a href="http://localhost:6156/#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb12-5"><a href="http://localhost:6156/#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Malcolm Brogdon's Distribution of Injury Frequency"</span>,</span>
-<span id="cb12-6"><a href="http://localhost:6156/#cb12-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb12-7"><a href="http://localhost:6156/#cb12-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="http://localhost:7260/#cb12-1" aria-hidden="true" tabindex="-1"></a>brogdon_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="http://localhost:7260/#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Malcolm Brogdon"</span>)</span>
+<span id="cb12-3"><a href="http://localhost:7260/#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(brogdon_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb12-4"><a href="http://localhost:7260/#cb12-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb12-5"><a href="http://localhost:7260/#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Malcolm Brogdon's Distribution of Injury Frequency"</span>,</span>
+<span id="cb12-6"><a href="http://localhost:7260/#cb12-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb12-7"><a href="http://localhost:7260/#cb12-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-10-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="http://localhost:6156/#cb13-1" aria-hidden="true" tabindex="-1"></a>jeff_green_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="http://localhost:6156/#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Jeff Green"</span>)</span>
-<span id="cb13-3"><a href="http://localhost:6156/#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(jeff_green_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb13-4"><a href="http://localhost:6156/#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb13-5"><a href="http://localhost:6156/#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Jeff Green's Distribution of Injury Frequency"</span>,</span>
-<span id="cb13-6"><a href="http://localhost:6156/#cb13-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb13-7"><a href="http://localhost:6156/#cb13-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="http://localhost:7260/#cb13-1" aria-hidden="true" tabindex="-1"></a>jeff_green_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="http://localhost:7260/#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Jeff Green"</span>)</span>
+<span id="cb13-3"><a href="http://localhost:7260/#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(jeff_green_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb13-4"><a href="http://localhost:7260/#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb13-5"><a href="http://localhost:7260/#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Jeff Green's Distribution of Injury Frequency"</span>,</span>
+<span id="cb13-6"><a href="http://localhost:7260/#cb13-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb13-7"><a href="http://localhost:7260/#cb13-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-11-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="http://localhost:6156/#cb14-1" aria-hidden="true" tabindex="-1"></a>brook_lopez_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb14-2"><a href="http://localhost:6156/#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Brook Lopez"</span>)</span>
-<span id="cb14-3"><a href="http://localhost:6156/#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(brook_lopez_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb14-4"><a href="http://localhost:6156/#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb14-5"><a href="http://localhost:6156/#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Brook Lopez's Distribution of Injury Frequency"</span>,</span>
-<span id="cb14-6"><a href="http://localhost:6156/#cb14-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb14-7"><a href="http://localhost:6156/#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="http://localhost:7260/#cb14-1" aria-hidden="true" tabindex="-1"></a>brook_lopez_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="http://localhost:7260/#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Brook Lopez"</span>)</span>
+<span id="cb14-3"><a href="http://localhost:7260/#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(brook_lopez_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb14-4"><a href="http://localhost:7260/#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb14-5"><a href="http://localhost:7260/#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Brook Lopez's Distribution of Injury Frequency"</span>,</span>
+<span id="cb14-6"><a href="http://localhost:7260/#cb14-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb14-7"><a href="http://localhost:7260/#cb14-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="http://localhost:6156/#cb15-1" aria-hidden="true" tabindex="-1"></a>rip_hamilton_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="http://localhost:6156/#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Richard Hamilton"</span>)</span>
-<span id="cb15-3"><a href="http://localhost:6156/#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rip_hamilton_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
-<span id="cb15-4"><a href="http://localhost:6156/#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
-<span id="cb15-5"><a href="http://localhost:6156/#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Rip Hamilton's Distribution of Injury Frequency"</span>,</span>
-<span id="cb15-6"><a href="http://localhost:6156/#cb15-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
-<span id="cb15-7"><a href="http://localhost:6156/#cb15-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="http://localhost:7260/#cb15-1" aria-hidden="true" tabindex="-1"></a>rip_hamilton_injuries <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="http://localhost:7260/#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Player <span class="sc">==</span> <span class="st">"Richard Hamilton"</span>)</span>
+<span id="cb15-3"><a href="http://localhost:7260/#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(rip_hamilton_injuries, <span class="fu">aes</span>(<span class="at">x =</span> frequent_injury)) <span class="sc">+</span></span>
+<span id="cb15-4"><a href="http://localhost:7260/#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>() <span class="sc">+</span></span>
+<span id="cb15-5"><a href="http://localhost:7260/#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Rip Hamilton's Distribution of Injury Frequency"</span>,</span>
+<span id="cb15-6"><a href="http://localhost:7260/#cb15-6" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Injury"</span>,</span>
+<span id="cb15-7"><a href="http://localhost:7260/#cb15-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">Y =</span> <span class="st">"Frequency"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="./Odds of Injury Against an NBA Player’s Weight and Height_files/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -271,93 +271,93 @@ The second dataset was a comprehensive list of all NBA players in history and th
 <p>Our initial analysis of these players showed that guards (typically shorter players) tended to suffer more from back injuries, while forwards (typically tall and not heavy for their height) were suffering most from ankle injuries. Across all positions and sizes, knee injuries were the most common.&nbsp;</p>
 <p>In the 34 year period we examined, there were 1,381 knee injuries. Comparatively, there were 1,027 ankle injuries and 699 back injuries.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="http://localhost:6156/#cb16-1" aria-hidden="true" tabindex="-1"></a>names_with_frequency <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(NBAI_filtered)</span>
-<span id="cb16-2"><a href="http://localhost:6156/#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="http://localhost:6156/#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new data frame with unique names and their frequencies</span></span>
-<span id="cb16-4"><a href="http://localhost:6156/#cb16-4" aria-hidden="true" tabindex="-1"></a>unique_names_NBAI <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">%&gt;%</span></span>
-<span id="cb16-5"><a href="http://localhost:6156/#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Player) <span class="sc">%&gt;%</span></span>
-<span id="cb16-6"><a href="http://localhost:6156/#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="http://localhost:7260/#cb16-1" aria-hidden="true" tabindex="-1"></a>names_with_frequency <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(NBAI_filtered)</span>
+<span id="cb16-2"><a href="http://localhost:7260/#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="http://localhost:7260/#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new data frame with unique names and their frequencies</span></span>
+<span id="cb16-4"><a href="http://localhost:7260/#cb16-4" aria-hidden="true" tabindex="-1"></a>unique_names_NBAI <span class="ot">&lt;-</span> NBAI_filtered <span class="sc">%&gt;%</span></span>
+<span id="cb16-5"><a href="http://localhost:7260/#cb16-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Player) <span class="sc">%&gt;%</span></span>
+<span id="cb16-6"><a href="http://localhost:7260/#cb16-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarise</span>(<span class="at">freq =</span> <span class="fu">n</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="http://localhost:6156/#cb17-1" aria-hidden="true" tabindex="-1"></a>NBAI_final <span class="ot">&lt;-</span> <span class="fu">merge</span>(names_with_frequency, unique_names_NBAI, <span class="at">by =</span> <span class="st">"Player"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="http://localhost:7260/#cb17-1" aria-hidden="true" tabindex="-1"></a>NBAI_final <span class="ot">&lt;-</span> <span class="fu">merge</span>(names_with_frequency, unique_names_NBAI, <span class="at">by =</span> <span class="st">"Player"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="http://localhost:6156/#cb18-1" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(NBAI_final, players, <span class="at">by =</span> <span class="st">'Player'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="http://localhost:7260/#cb18-1" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> <span class="fu">left_join</span>(NBAI_final, players, <span class="at">by =</span> <span class="st">'Player'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="http://localhost:6156/#cb19-1" aria-hidden="true" tabindex="-1"></a>calculate_injury_frequencies <span class="ot">&lt;-</span> <span class="cf">function</span>(injury_data) {</span>
-<span id="cb19-2"><a href="http://localhost:6156/#cb19-2" aria-hidden="true" tabindex="-1"></a>  injury_types <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'knee'</span>, <span class="st">'ankle'</span>, <span class="st">'back'</span>)</span>
-<span id="cb19-3"><a href="http://localhost:6156/#cb19-3" aria-hidden="true" tabindex="-1"></a>  frequencies <span class="ot">&lt;-</span> <span class="fu">sapply</span>(injury_types, <span class="cf">function</span>(injury_type) {</span>
-<span id="cb19-4"><a href="http://localhost:6156/#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">grepl</span>(injury_type, injury_data<span class="sc">$</span>Injury, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
-<span id="cb19-5"><a href="http://localhost:6156/#cb19-5" aria-hidden="true" tabindex="-1"></a>  })</span>
-<span id="cb19-6"><a href="http://localhost:6156/#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(frequencies) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(injury_types, <span class="st">'_frequency'</span>)</span>
-<span id="cb19-7"><a href="http://localhost:6156/#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(frequencies)</span>
-<span id="cb19-8"><a href="http://localhost:6156/#cb19-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="http://localhost:7260/#cb19-1" aria-hidden="true" tabindex="-1"></a>calculate_injury_frequencies <span class="ot">&lt;-</span> <span class="cf">function</span>(injury_data) {</span>
+<span id="cb19-2"><a href="http://localhost:7260/#cb19-2" aria-hidden="true" tabindex="-1"></a>  injury_types <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">'knee'</span>, <span class="st">'ankle'</span>, <span class="st">'back'</span>)</span>
+<span id="cb19-3"><a href="http://localhost:7260/#cb19-3" aria-hidden="true" tabindex="-1"></a>  frequencies <span class="ot">&lt;-</span> <span class="fu">sapply</span>(injury_types, <span class="cf">function</span>(injury_type) {</span>
+<span id="cb19-4"><a href="http://localhost:7260/#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sum</span>(<span class="fu">grepl</span>(injury_type, injury_data<span class="sc">$</span>Injury, <span class="at">ignore.case =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb19-5"><a href="http://localhost:7260/#cb19-5" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb19-6"><a href="http://localhost:7260/#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">names</span>(frequencies) <span class="ot">&lt;-</span> <span class="fu">paste0</span>(injury_types, <span class="st">'_frequency'</span>)</span>
+<span id="cb19-7"><a href="http://localhost:7260/#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(frequencies)</span>
+<span id="cb19-8"><a href="http://localhost:7260/#cb19-8" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="http://localhost:6156/#cb20-1" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span></span>
-<span id="cb20-2"><a href="http://localhost:6156/#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Player) <span class="sc">%&gt;%</span></span>
-<span id="cb20-3"><a href="http://localhost:6156/#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb20-4"><a href="http://localhost:6156/#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">knee_frequency =</span> <span class="fu">sum</span>(Injury <span class="sc">==</span> <span class="st">"knee"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb20-5"><a href="http://localhost:6156/#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">back_frequency =</span> <span class="fu">sum</span>(Injury <span class="sc">==</span> <span class="st">"back"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
-<span id="cb20-6"><a href="http://localhost:6156/#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ankle_frequency =</span> <span class="fu">sum</span>(Injury <span class="sc">==</span> <span class="st">"ankle"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb20-7"><a href="http://localhost:6156/#cb20-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="http://localhost:7260/#cb20-1" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span></span>
+<span id="cb20-2"><a href="http://localhost:7260/#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Player) <span class="sc">%&gt;%</span></span>
+<span id="cb20-3"><a href="http://localhost:7260/#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb20-4"><a href="http://localhost:7260/#cb20-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">knee_frequency =</span> <span class="fu">sum</span>(Injury <span class="sc">==</span> <span class="st">"knee"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb20-5"><a href="http://localhost:7260/#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">back_frequency =</span> <span class="fu">sum</span>(Injury <span class="sc">==</span> <span class="st">"back"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb20-6"><a href="http://localhost:7260/#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">ankle_frequency =</span> <span class="fu">sum</span>(Injury <span class="sc">==</span> <span class="st">"ankle"</span>, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-7"><a href="http://localhost:7260/#cb20-7" aria-hidden="true" tabindex="-1"></a>  )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="http://localhost:6156/#cb21-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a href="http://localhost:6156/#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Player) <span class="sc">|&gt;</span></span>
-<span id="cb21-3"><a href="http://localhost:6156/#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span> (<span class="at">knee_count =</span> <span class="fu">min</span>(knee_frequency),</span>
-<span id="cb21-4"><a href="http://localhost:6156/#cb21-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">back_count =</span> <span class="fu">min</span>(back_frequency),</span>
-<span id="cb21-5"><a href="http://localhost:6156/#cb21-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">ankle_count =</span> <span class="fu">min</span>(ankle_frequency),</span>
-<span id="cb21-6"><a href="http://localhost:6156/#cb21-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">height..cm =</span> <span class="fu">min</span>(height..cm.),</span>
-<span id="cb21-7"><a href="http://localhost:6156/#cb21-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">weight..kg. =</span> (<span class="fu">min</span>(weight..kg.))</span>
-<span id="cb21-8"><a href="http://localhost:6156/#cb21-8" aria-hidden="true" tabindex="-1"></a>             )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="http://localhost:7260/#cb21-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="http://localhost:7260/#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(Player) <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="http://localhost:7260/#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span> (<span class="at">knee_count =</span> <span class="fu">min</span>(knee_frequency),</span>
+<span id="cb21-4"><a href="http://localhost:7260/#cb21-4" aria-hidden="true" tabindex="-1"></a>             <span class="at">back_count =</span> <span class="fu">min</span>(back_frequency),</span>
+<span id="cb21-5"><a href="http://localhost:7260/#cb21-5" aria-hidden="true" tabindex="-1"></a>             <span class="at">ankle_count =</span> <span class="fu">min</span>(ankle_frequency),</span>
+<span id="cb21-6"><a href="http://localhost:7260/#cb21-6" aria-hidden="true" tabindex="-1"></a>             <span class="at">height..cm =</span> <span class="fu">min</span>(height..cm.),</span>
+<span id="cb21-7"><a href="http://localhost:7260/#cb21-7" aria-hidden="true" tabindex="-1"></a>             <span class="at">weight..kg. =</span> (<span class="fu">min</span>(weight..kg.))</span>
+<span id="cb21-8"><a href="http://localhost:7260/#cb21-8" aria-hidden="true" tabindex="-1"></a>             )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="http://localhost:6156/#cb22-1" aria-hidden="true" tabindex="-1"></a>final_dataset<span class="sc">$</span>height..cm <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(final_dataset<span class="sc">$</span>height..cm))</span>
-<span id="cb22-2"><a href="http://localhost:6156/#cb22-2" aria-hidden="true" tabindex="-1"></a>final_dataset<span class="sc">$</span>weight..kg. <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(final_dataset<span class="sc">$</span>weight..kg.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="http://localhost:7260/#cb22-1" aria-hidden="true" tabindex="-1"></a>final_dataset<span class="sc">$</span>height..cm <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(final_dataset<span class="sc">$</span>height..cm))</span>
+<span id="cb22-2"><a href="http://localhost:7260/#cb22-2" aria-hidden="true" tabindex="-1"></a>final_dataset<span class="sc">$</span>weight..kg. <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(final_dataset<span class="sc">$</span>weight..kg.))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="http://localhost:6156/#cb23-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb23-2"><a href="http://localhost:6156/#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb23-3"><a href="http://localhost:6156/#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(height..cm) <span class="sc">%&gt;%</span></span>
-<span id="cb23-4"><a href="http://localhost:6156/#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_knee_injuries_by_height =</span> <span class="fu">mean</span>(knee_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="http://localhost:7260/#cb23-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb23-2"><a href="http://localhost:7260/#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">na.omit</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb23-3"><a href="http://localhost:7260/#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(height..cm) <span class="sc">%&gt;%</span></span>
+<span id="cb23-4"><a href="http://localhost:7260/#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_knee_injuries_by_height =</span> <span class="fu">mean</span>(knee_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="http://localhost:6156/#cb24-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb24-2"><a href="http://localhost:6156/#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(height..cm) <span class="sc">%&gt;%</span></span>
-<span id="cb24-3"><a href="http://localhost:6156/#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_ankle_injuries_by_height =</span> <span class="fu">mean</span>(ankle_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="http://localhost:7260/#cb24-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb24-2"><a href="http://localhost:7260/#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(height..cm) <span class="sc">%&gt;%</span></span>
+<span id="cb24-3"><a href="http://localhost:7260/#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_ankle_injuries_by_height =</span> <span class="fu">mean</span>(ankle_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="http://localhost:6156/#cb25-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb25-2"><a href="http://localhost:6156/#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(height..cm) <span class="sc">%&gt;%</span></span>
-<span id="cb25-3"><a href="http://localhost:6156/#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_back_injuries_by_height =</span> <span class="fu">mean</span>(back_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="http://localhost:7260/#cb25-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb25-2"><a href="http://localhost:7260/#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(height..cm) <span class="sc">%&gt;%</span></span>
+<span id="cb25-3"><a href="http://localhost:7260/#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_back_injuries_by_height =</span> <span class="fu">mean</span>(back_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="http://localhost:6156/#cb26-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb26-2"><a href="http://localhost:6156/#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(weight..kg.) <span class="sc">%&gt;%</span></span>
-<span id="cb26-3"><a href="http://localhost:6156/#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_knee_injuries_by_weight =</span> <span class="fu">mean</span>(knee_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="http://localhost:7260/#cb26-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb26-2"><a href="http://localhost:7260/#cb26-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(weight..kg.) <span class="sc">%&gt;%</span></span>
+<span id="cb26-3"><a href="http://localhost:7260/#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_knee_injuries_by_weight =</span> <span class="fu">mean</span>(knee_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="http://localhost:6156/#cb27-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb27-2"><a href="http://localhost:6156/#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(weight..kg.) <span class="sc">%&gt;%</span></span>
-<span id="cb27-3"><a href="http://localhost:6156/#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_ankle_injuries_by_weight =</span> <span class="fu">mean</span>(ankle_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="http://localhost:7260/#cb27-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb27-2"><a href="http://localhost:7260/#cb27-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(weight..kg.) <span class="sc">%&gt;%</span></span>
+<span id="cb27-3"><a href="http://localhost:7260/#cb27-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_ankle_injuries_by_weight =</span> <span class="fu">mean</span>(ankle_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="http://localhost:6156/#cb28-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
-<span id="cb28-2"><a href="http://localhost:6156/#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(weight..kg.) <span class="sc">%&gt;%</span></span>
-<span id="cb28-3"><a href="http://localhost:6156/#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_back_injuries_by_weight =</span> <span class="fu">mean</span>(back_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="http://localhost:7260/#cb28-1" aria-hidden="true" tabindex="-1"></a>final_dataset <span class="ot">&lt;-</span> final_dataset <span class="sc">%&gt;%</span></span>
+<span id="cb28-2"><a href="http://localhost:7260/#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(weight..kg.) <span class="sc">%&gt;%</span></span>
+<span id="cb28-3"><a href="http://localhost:7260/#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">average_back_injuries_by_weight =</span> <span class="fu">mean</span>(back_count, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="models-and-interpretation" class="level1">
 <h1>Models and Interpretation</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="http://localhost:6156/#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> weight..kg., <span class="at">y =</span> average_ankle_injuries_by_weight)) <span class="sc">+</span></span>
-<span id="cb29-2"><a href="http://localhost:6156/#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb29-3"><a href="http://localhost:6156/#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb29-4"><a href="http://localhost:6156/#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Ankle Injuries by Weight"</span>) <span class="sc">+</span></span>
-<span id="cb29-5"><a href="http://localhost:6156/#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Weight (kg"</span>) <span class="sc">+</span></span>
-<span id="cb29-6"><a href="http://localhost:6156/#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Ankle Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="http://localhost:7260/#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> weight..kg., <span class="at">y =</span> average_ankle_injuries_by_weight)) <span class="sc">+</span></span>
+<span id="cb29-2"><a href="http://localhost:7260/#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb29-3"><a href="http://localhost:7260/#cb29-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb29-4"><a href="http://localhost:7260/#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Ankle Injuries by Weight"</span>) <span class="sc">+</span></span>
+<span id="cb29-5"><a href="http://localhost:7260/#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Weight (kg"</span>) <span class="sc">+</span></span>
+<span id="cb29-6"><a href="http://localhost:7260/#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Ankle Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -366,26 +366,26 @@ The second dataset was a comprehensive list of all NBA players in history and th
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="http://localhost:6156/#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
-<span id="cb31-2"><a href="http://localhost:6156/#cb31-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_ankle_injuries_by_weight <span class="sc">~</span> weight..kg., <span class="at">data =</span> final_dataset)</span>
-<span id="cb31-3"><a href="http://localhost:6156/#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-4"><a href="http://localhost:6156/#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
-<span id="cb31-5"><a href="http://localhost:6156/#cb31-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"weight..kg."</span>]</span>
-<span id="cb31-6"><a href="http://localhost:6156/#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb31-7"><a href="http://localhost:6156/#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
-<span id="cb31-8"><a href="http://localhost:6156/#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="http://localhost:7260/#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
+<span id="cb31-2"><a href="http://localhost:7260/#cb31-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_ankle_injuries_by_weight <span class="sc">~</span> weight..kg., <span class="at">data =</span> final_dataset)</span>
+<span id="cb31-3"><a href="http://localhost:7260/#cb31-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-4"><a href="http://localhost:7260/#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
+<span id="cb31-5"><a href="http://localhost:7260/#cb31-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"weight..kg."</span>]</span>
+<span id="cb31-6"><a href="http://localhost:7260/#cb31-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-7"><a href="http://localhost:7260/#cb31-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
+<span id="cb31-8"><a href="http://localhost:7260/#cb31-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Slope of the trendline: -0.000798212305512173"</code></pre>
 </div>
 </div>
 <p>The graph presented indicates a subtle but discernible weak negative correlation between weight and the occurrence of ankle injuries among NBA players. This inverse relationship suggests that as the weight of players increases, there is a tendency for a decrease in the frequency of ankle injuries. Several factors might contribute to this intriguing correlation. Firstly, players with higher body weight may possess greater muscle mass and strength, which could provide enhanced stability and support to the ankle joints during dynamic movements on the basketball court, reducing the likelihood of injuries. Additionally, heavier players adopt playing styles or positions that involve less stress on the ankles, contributing to a lower incidence of injuries. Understanding this correlation is vital for developing targeted injury prevention strategies and training programs tailored to the unique physical characteristics of NBA players, ultimately fostering their overall well-being and on-court performance.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="http://localhost:6156/#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> height..cm, <span class="at">y =</span> average_ankle_injuries_by_height)) <span class="sc">+</span></span>
-<span id="cb33-2"><a href="http://localhost:6156/#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb33-3"><a href="http://localhost:6156/#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb33-4"><a href="http://localhost:6156/#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Ankle Injuries by Height"</span>) <span class="sc">+</span></span>
-<span id="cb33-5"><a href="http://localhost:6156/#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span></span>
-<span id="cb33-6"><a href="http://localhost:6156/#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Ankle Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="http://localhost:7260/#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> height..cm, <span class="at">y =</span> average_ankle_injuries_by_height)) <span class="sc">+</span></span>
+<span id="cb33-2"><a href="http://localhost:7260/#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb33-3"><a href="http://localhost:7260/#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb33-4"><a href="http://localhost:7260/#cb33-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Ankle Injuries by Height"</span>) <span class="sc">+</span></span>
+<span id="cb33-5"><a href="http://localhost:7260/#cb33-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb33-6"><a href="http://localhost:7260/#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Ankle Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -394,26 +394,26 @@ The second dataset was a comprehensive list of all NBA players in history and th
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="http://localhost:6156/#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
-<span id="cb35-2"><a href="http://localhost:6156/#cb35-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_ankle_injuries_by_height <span class="sc">~</span> height..cm, <span class="at">data =</span> final_dataset)</span>
-<span id="cb35-3"><a href="http://localhost:6156/#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-4"><a href="http://localhost:6156/#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
-<span id="cb35-5"><a href="http://localhost:6156/#cb35-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"height..cm"</span>]</span>
-<span id="cb35-6"><a href="http://localhost:6156/#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-7"><a href="http://localhost:6156/#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
-<span id="cb35-8"><a href="http://localhost:6156/#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="http://localhost:7260/#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
+<span id="cb35-2"><a href="http://localhost:7260/#cb35-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_ankle_injuries_by_height <span class="sc">~</span> height..cm, <span class="at">data =</span> final_dataset)</span>
+<span id="cb35-3"><a href="http://localhost:7260/#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="http://localhost:7260/#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
+<span id="cb35-5"><a href="http://localhost:7260/#cb35-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"height..cm"</span>]</span>
+<span id="cb35-6"><a href="http://localhost:7260/#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="http://localhost:7260/#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
+<span id="cb35-8"><a href="http://localhost:7260/#cb35-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Slope of the trendline: -0.00302056005149644"</code></pre>
 </div>
 </div>
 <p>The graph depicted indicates a subtle and weak negative correlation between height and the incidence of ankle injuries among NBA players. This implies that as player height increases, there is a slight decrease in the likelihood of experiencing ankle injuries. Several factors may contribute to this observed correlation. Taller players often possess longer limbs and may employ a playing style that involves greater spatial awareness and control over their movements, potentially reducing the risk of sudden ankle injuries. Additionally, taller players might have a different distribution of body weight, affecting their balance and stability during dynamic actions on the basketball court. The findings suggest that understanding the relationship between height and ankle injuries is crucial for tailoring injury prevention strategies, training programs, and rehabilitation protocols to address the distinct physical attributes and potential risks associated with taller NBA players, contributing to their overall well-being and performance on the court.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="http://localhost:6156/#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> height..cm, <span class="at">y =</span> average_back_injuries_by_height)) <span class="sc">+</span></span>
-<span id="cb37-2"><a href="http://localhost:6156/#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb37-3"><a href="http://localhost:6156/#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb37-4"><a href="http://localhost:6156/#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Back Injuries by Height"</span>) <span class="sc">+</span></span>
-<span id="cb37-5"><a href="http://localhost:6156/#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span></span>
-<span id="cb37-6"><a href="http://localhost:6156/#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Back Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="http://localhost:7260/#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> height..cm, <span class="at">y =</span> average_back_injuries_by_height)) <span class="sc">+</span></span>
+<span id="cb37-2"><a href="http://localhost:7260/#cb37-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb37-3"><a href="http://localhost:7260/#cb37-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb37-4"><a href="http://localhost:7260/#cb37-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Back Injuries by Height"</span>) <span class="sc">+</span></span>
+<span id="cb37-5"><a href="http://localhost:7260/#cb37-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb37-6"><a href="http://localhost:7260/#cb37-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Back Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -422,26 +422,26 @@ The second dataset was a comprehensive list of all NBA players in history and th
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="http://localhost:6156/#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
-<span id="cb39-2"><a href="http://localhost:6156/#cb39-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_back_injuries_by_height <span class="sc">~</span> height..cm, <span class="at">data =</span> final_dataset)</span>
-<span id="cb39-3"><a href="http://localhost:6156/#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-4"><a href="http://localhost:6156/#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
-<span id="cb39-5"><a href="http://localhost:6156/#cb39-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"height..cm"</span>]</span>
-<span id="cb39-6"><a href="http://localhost:6156/#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb39-7"><a href="http://localhost:6156/#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
-<span id="cb39-8"><a href="http://localhost:6156/#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="http://localhost:7260/#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
+<span id="cb39-2"><a href="http://localhost:7260/#cb39-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_back_injuries_by_height <span class="sc">~</span> height..cm, <span class="at">data =</span> final_dataset)</span>
+<span id="cb39-3"><a href="http://localhost:7260/#cb39-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-4"><a href="http://localhost:7260/#cb39-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
+<span id="cb39-5"><a href="http://localhost:7260/#cb39-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"height..cm"</span>]</span>
+<span id="cb39-6"><a href="http://localhost:7260/#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="http://localhost:7260/#cb39-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
+<span id="cb39-8"><a href="http://localhost:7260/#cb39-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Slope of the trendline: 0.00918208406422968"</code></pre>
 </div>
 </div>
 <p>The depicted graph reveals a noteworthy positive correlation between height and the occurrence of back injuries within the context of NBA players. This association could be attributed to several factors unique to the sport and the physical demands placed on basketball players, particularly those with greater height. Firstly, taller NBA players often engage in intense physical activities, such as jumping, dunking, and blocking shots, which can subject their spines to increased stress and impact, potentially leading to a higher susceptibility to back injuries. Moreover, the height-related biomechanics and playing style may contribute to altered postures and increased pressure on the spinal column, amplifying the risk of back-related issues. The findings from this correlation emphasize the importance of tailored injury prevention strategies, specialized training regimens, and individualized healthcare protocols for NBA players, taking into account their specific physical attributes and the demands of the sport to ensure prolonged and optimal athletic performance.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="http://localhost:6156/#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> weight..kg., <span class="at">y =</span> average_back_injuries_by_weight)) <span class="sc">+</span></span>
-<span id="cb41-2"><a href="http://localhost:6156/#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb41-3"><a href="http://localhost:6156/#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb41-4"><a href="http://localhost:6156/#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Back Injuries by Weight"</span>) <span class="sc">+</span></span>
-<span id="cb41-5"><a href="http://localhost:6156/#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Weight (kg"</span>) <span class="sc">+</span></span>
-<span id="cb41-6"><a href="http://localhost:6156/#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Back Injuries by Height"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="http://localhost:7260/#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> weight..kg., <span class="at">y =</span> average_back_injuries_by_weight)) <span class="sc">+</span></span>
+<span id="cb41-2"><a href="http://localhost:7260/#cb41-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb41-3"><a href="http://localhost:7260/#cb41-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb41-4"><a href="http://localhost:7260/#cb41-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Back Injuries by Weight"</span>) <span class="sc">+</span></span>
+<span id="cb41-5"><a href="http://localhost:7260/#cb41-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Weight (kg"</span>) <span class="sc">+</span></span>
+<span id="cb41-6"><a href="http://localhost:7260/#cb41-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Back Injuries by Height"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -450,26 +450,26 @@ The second dataset was a comprehensive list of all NBA players in history and th
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="http://localhost:6156/#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
-<span id="cb43-2"><a href="http://localhost:6156/#cb43-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_back_injuries_by_weight <span class="sc">~</span> weight..kg., <span class="at">data =</span> final_dataset)</span>
-<span id="cb43-3"><a href="http://localhost:6156/#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-4"><a href="http://localhost:6156/#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
-<span id="cb43-5"><a href="http://localhost:6156/#cb43-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"weight..kg."</span>]</span>
-<span id="cb43-6"><a href="http://localhost:6156/#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb43-7"><a href="http://localhost:6156/#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
-<span id="cb43-8"><a href="http://localhost:6156/#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="http://localhost:7260/#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
+<span id="cb43-2"><a href="http://localhost:7260/#cb43-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_back_injuries_by_weight <span class="sc">~</span> weight..kg., <span class="at">data =</span> final_dataset)</span>
+<span id="cb43-3"><a href="http://localhost:7260/#cb43-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-4"><a href="http://localhost:7260/#cb43-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
+<span id="cb43-5"><a href="http://localhost:7260/#cb43-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"weight..kg."</span>]</span>
+<span id="cb43-6"><a href="http://localhost:7260/#cb43-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-7"><a href="http://localhost:7260/#cb43-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
+<span id="cb43-8"><a href="http://localhost:7260/#cb43-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Slope of the trendline: 0.00596647457977623"</code></pre>
 </div>
 </div>
 <p>The graph above reveals a notable positive correlation between weight and the occurrence of back injuries among NBA players. This association implies that as player weight increases, there is a corresponding increase in the likelihood of experiencing back injuries. Several factors may contribute to this observed correlation. Firstly, players with higher body weight may experience greater stress on their spine due to the increased load and forces exerted during dynamic movements inherent to basketball. The additional weight could potentially strain the lower back, leading to a higher incidence of injuries. Furthermore, the playing style of heavier players or the positions they occupy on the court may involve actions that put additional strain on the back, exacerbating the correlation. Recognizing this positive association is crucial for developing targeted injury prevention strategies, customized training regimens, and healthcare interventions to address the specific challenges posed by increased weight and reduce the risk of back injuries in NBA players.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="http://localhost:6156/#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> weight..kg., <span class="at">y =</span> average_knee_injuries_by_weight)) <span class="sc">+</span></span>
-<span id="cb45-2"><a href="http://localhost:6156/#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb45-3"><a href="http://localhost:6156/#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb45-4"><a href="http://localhost:6156/#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Knee Injuries by Weight"</span>) <span class="sc">+</span></span>
-<span id="cb45-5"><a href="http://localhost:6156/#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Weight (kg"</span>) <span class="sc">+</span></span>
-<span id="cb45-6"><a href="http://localhost:6156/#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Knee Injuries by Height"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="http://localhost:7260/#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> weight..kg., <span class="at">y =</span> average_knee_injuries_by_weight)) <span class="sc">+</span></span>
+<span id="cb45-2"><a href="http://localhost:7260/#cb45-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb45-3"><a href="http://localhost:7260/#cb45-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb45-4"><a href="http://localhost:7260/#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Knee Injuries by Weight"</span>) <span class="sc">+</span></span>
+<span id="cb45-5"><a href="http://localhost:7260/#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Weight (kg"</span>) <span class="sc">+</span></span>
+<span id="cb45-6"><a href="http://localhost:7260/#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Knee Injuries by Height"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -478,26 +478,26 @@ The second dataset was a comprehensive list of all NBA players in history and th
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="http://localhost:6156/#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
-<span id="cb47-2"><a href="http://localhost:6156/#cb47-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_knee_injuries_by_weight <span class="sc">~</span> weight..kg., <span class="at">data =</span> final_dataset)</span>
-<span id="cb47-3"><a href="http://localhost:6156/#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-4"><a href="http://localhost:6156/#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
-<span id="cb47-5"><a href="http://localhost:6156/#cb47-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"weight..kg."</span>]</span>
-<span id="cb47-6"><a href="http://localhost:6156/#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-7"><a href="http://localhost:6156/#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
-<span id="cb47-8"><a href="http://localhost:6156/#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="http://localhost:7260/#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
+<span id="cb47-2"><a href="http://localhost:7260/#cb47-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_knee_injuries_by_weight <span class="sc">~</span> weight..kg., <span class="at">data =</span> final_dataset)</span>
+<span id="cb47-3"><a href="http://localhost:7260/#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="http://localhost:7260/#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
+<span id="cb47-5"><a href="http://localhost:7260/#cb47-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"weight..kg."</span>]</span>
+<span id="cb47-6"><a href="http://localhost:7260/#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="http://localhost:7260/#cb47-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
+<span id="cb47-8"><a href="http://localhost:7260/#cb47-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Slope of the trendline: 0.00235645701174638"</code></pre>
 </div>
 </div>
 <p>The graph above unveils a conspicuous positive correlation between player weight and the occurrence of knee injuries in the NBA. This correlation implies that as the weight of players increases, there is a corresponding escalation in the likelihood of sustaining knee injuries. Several possible factors contribute to this observed correlation. Firstly, the additional weight carried by players may lead to heightened biomechanical stress on the knee joints during various high-impact movements inherent to basketball, such as cutting, jumping, and rapid changes in direction. This increased stress can contribute to a higher susceptibility to knee injuries. Additionally, players with greater body weight may have different movement patterns or playing styles that expose their knees to increased forces or awkward positions, increasing the risk of injury. Recognizing this positive correlation is pivotal for devising targeted injury prevention strategies, implementing weight management programs, and developing rehabilitation protocols tailored to address the specific challenges associated with increased weight among NBA players, ultimately promoting their overall well-being and longevity in the sport.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="http://localhost:6156/#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> height..cm, <span class="at">y =</span> average_knee_injuries_by_height)) <span class="sc">+</span></span>
-<span id="cb49-2"><a href="http://localhost:6156/#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
-<span id="cb49-3"><a href="http://localhost:6156/#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
-<span id="cb49-4"><a href="http://localhost:6156/#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Knee Injuries by Height"</span>) <span class="sc">+</span></span>
-<span id="cb49-5"><a href="http://localhost:6156/#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span></span>
-<span id="cb49-6"><a href="http://localhost:6156/#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Knee Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="http://localhost:7260/#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(final_dataset, <span class="fu">aes</span>(<span class="at">x =</span> height..cm, <span class="at">y =</span> average_knee_injuries_by_height)) <span class="sc">+</span></span>
+<span id="cb49-2"><a href="http://localhost:7260/#cb49-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb49-3"><a href="http://localhost:7260/#cb49-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method =</span> <span class="st">"lm"</span>, <span class="at">se =</span> <span class="cn">FALSE</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb49-4"><a href="http://localhost:7260/#cb49-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Average Knee Injuries by Height"</span>) <span class="sc">+</span></span>
+<span id="cb49-5"><a href="http://localhost:7260/#cb49-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Height (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb49-6"><a href="http://localhost:7260/#cb49-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Average Number of Knee Injuries"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
 </div>
@@ -506,14 +506,14 @@ The second dataset was a comprehensive list of all NBA players in history and th
 </div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="http://localhost:6156/#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
-<span id="cb51-2"><a href="http://localhost:6156/#cb51-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_knee_injuries_by_height <span class="sc">~</span> height..cm, <span class="at">data =</span> final_dataset)</span>
-<span id="cb51-3"><a href="http://localhost:6156/#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-4"><a href="http://localhost:6156/#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
-<span id="cb51-5"><a href="http://localhost:6156/#cb51-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"height..cm"</span>]</span>
-<span id="cb51-6"><a href="http://localhost:6156/#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb51-7"><a href="http://localhost:6156/#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
-<span id="cb51-8"><a href="http://localhost:6156/#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="http://localhost:7260/#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit a linear regression model</span></span>
+<span id="cb51-2"><a href="http://localhost:7260/#cb51-2" aria-hidden="true" tabindex="-1"></a>lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(average_knee_injuries_by_height <span class="sc">~</span> height..cm, <span class="at">data =</span> final_dataset)</span>
+<span id="cb51-3"><a href="http://localhost:7260/#cb51-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-4"><a href="http://localhost:7260/#cb51-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract the slope coefficient</span></span>
+<span id="cb51-5"><a href="http://localhost:7260/#cb51-5" aria-hidden="true" tabindex="-1"></a>slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="st">"height..cm"</span>]</span>
+<span id="cb51-6"><a href="http://localhost:7260/#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="http://localhost:7260/#cb51-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope coefficient</span></span>
+<span id="cb51-8"><a href="http://localhost:7260/#cb51-8" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Slope of the trendline:"</span>, slope))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] "Slope of the trendline: 0.00466196293822401"</code></pre>
 </div>
@@ -523,25 +523,25 @@ The second dataset was a comprehensive list of all NBA players in history and th
 <section id="conclusion" class="level1">
 <h1>Conclusion</h1>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="http://localhost:6156/#cb53-1" aria-hidden="true" tabindex="-1"></a>slope_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Graph =</span> <span class="fu">character</span>(), <span class="at">Slope =</span> <span class="fu">numeric</span>(), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb53-2"><a href="http://localhost:6156/#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-3"><a href="http://localhost:6156/#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit linear regression models and extract slopes for each graph</span></span>
-<span id="cb53-4"><a href="http://localhost:6156/#cb53-4" aria-hidden="true" tabindex="-1"></a>graph_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Back Injuries by Weight"</span>, <span class="st">"Knee Injuries by Weight"</span>, <span class="st">"Knee Injuries by Height"</span>, <span class="st">"Back Injuries by Height"</span>, <span class="st">"Ankle Injuries by Weight"</span>, <span class="st">"Ankle Injuries by Height"</span>)</span>
-<span id="cb53-5"><a href="http://localhost:6156/#cb53-5" aria-hidden="true" tabindex="-1"></a>x_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"weight..kg."</span>, <span class="st">"weight..kg."</span>, <span class="st">"height..cm"</span>, <span class="st">"height..cm"</span>, <span class="st">"weight..kg."</span>, <span class="st">"height..cm"</span>)</span>
-<span id="cb53-6"><a href="http://localhost:6156/#cb53-6" aria-hidden="true" tabindex="-1"></a>y_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"average_back_injuries_by_weight"</span>, <span class="st">"average_knee_injuries_by_weight"</span>, <span class="st">"average_knee_injuries_by_height"</span>, <span class="st">"average_back_injuries_by_height"</span>, <span class="st">"average_ankle_injuries_by_weight"</span>, <span class="st">"average_ankle_injuries_by_height"</span>)</span>
-<span id="cb53-7"><a href="http://localhost:6156/#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb53-8"><a href="http://localhost:6156/#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(graph_names)) {</span>
-<span id="cb53-9"><a href="http://localhost:6156/#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fit linear regression model</span></span>
-<span id="cb53-10"><a href="http://localhost:6156/#cb53-10" aria-hidden="true" tabindex="-1"></a>  lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">get</span>(y_vars[i]) <span class="sc">~</span> <span class="fu">get</span>(x_vars[i]), <span class="at">data =</span> final_dataset)</span>
-<span id="cb53-11"><a href="http://localhost:6156/#cb53-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb53-12"><a href="http://localhost:6156/#cb53-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract the slope coefficient</span></span>
-<span id="cb53-13"><a href="http://localhost:6156/#cb53-13" aria-hidden="true" tabindex="-1"></a>  slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="dv">2</span>]  <span class="co"># Slope coefficient is the second coefficient</span></span>
-<span id="cb53-14"><a href="http://localhost:6156/#cb53-14" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb53-15"><a href="http://localhost:6156/#cb53-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add slope to the dataframe</span></span>
-<span id="cb53-16"><a href="http://localhost:6156/#cb53-16" aria-hidden="true" tabindex="-1"></a>  slope_table <span class="ot">&lt;-</span> <span class="fu">rbind</span>(slope_table, <span class="fu">data.frame</span>(<span class="at">Graph =</span> graph_names[i], <span class="at">Slope =</span> slope))</span>
-<span id="cb53-17"><a href="http://localhost:6156/#cb53-17" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb53-18"><a href="http://localhost:6156/#cb53-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope table</span></span>
-<span id="cb53-19"><a href="http://localhost:6156/#cb53-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(slope_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="http://localhost:7260/#cb53-1" aria-hidden="true" tabindex="-1"></a>slope_table <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">Graph =</span> <span class="fu">character</span>(), <span class="at">Slope =</span> <span class="fu">numeric</span>(), <span class="at">stringsAsFactors =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb53-2"><a href="http://localhost:7260/#cb53-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-3"><a href="http://localhost:7260/#cb53-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit linear regression models and extract slopes for each graph</span></span>
+<span id="cb53-4"><a href="http://localhost:7260/#cb53-4" aria-hidden="true" tabindex="-1"></a>graph_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Back Injuries by Weight"</span>, <span class="st">"Knee Injuries by Weight"</span>, <span class="st">"Knee Injuries by Height"</span>, <span class="st">"Back Injuries by Height"</span>, <span class="st">"Ankle Injuries by Weight"</span>, <span class="st">"Ankle Injuries by Height"</span>)</span>
+<span id="cb53-5"><a href="http://localhost:7260/#cb53-5" aria-hidden="true" tabindex="-1"></a>x_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"weight..kg."</span>, <span class="st">"weight..kg."</span>, <span class="st">"height..cm"</span>, <span class="st">"height..cm"</span>, <span class="st">"weight..kg."</span>, <span class="st">"height..cm"</span>)</span>
+<span id="cb53-6"><a href="http://localhost:7260/#cb53-6" aria-hidden="true" tabindex="-1"></a>y_vars <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"average_back_injuries_by_weight"</span>, <span class="st">"average_knee_injuries_by_weight"</span>, <span class="st">"average_knee_injuries_by_height"</span>, <span class="st">"average_back_injuries_by_height"</span>, <span class="st">"average_ankle_injuries_by_weight"</span>, <span class="st">"average_ankle_injuries_by_height"</span>)</span>
+<span id="cb53-7"><a href="http://localhost:7260/#cb53-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-8"><a href="http://localhost:7260/#cb53-8" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(graph_names)) {</span>
+<span id="cb53-9"><a href="http://localhost:7260/#cb53-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Fit linear regression model</span></span>
+<span id="cb53-10"><a href="http://localhost:7260/#cb53-10" aria-hidden="true" tabindex="-1"></a>  lm_model <span class="ot">&lt;-</span> <span class="fu">lm</span>(<span class="fu">get</span>(y_vars[i]) <span class="sc">~</span> <span class="fu">get</span>(x_vars[i]), <span class="at">data =</span> final_dataset)</span>
+<span id="cb53-11"><a href="http://localhost:7260/#cb53-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb53-12"><a href="http://localhost:7260/#cb53-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Extract the slope coefficient</span></span>
+<span id="cb53-13"><a href="http://localhost:7260/#cb53-13" aria-hidden="true" tabindex="-1"></a>  slope <span class="ot">&lt;-</span> <span class="fu">coef</span>(lm_model)[<span class="dv">2</span>]  <span class="co"># Slope coefficient is the second coefficient</span></span>
+<span id="cb53-14"><a href="http://localhost:7260/#cb53-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb53-15"><a href="http://localhost:7260/#cb53-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Add slope to the dataframe</span></span>
+<span id="cb53-16"><a href="http://localhost:7260/#cb53-16" aria-hidden="true" tabindex="-1"></a>  slope_table <span class="ot">&lt;-</span> <span class="fu">rbind</span>(slope_table, <span class="fu">data.frame</span>(<span class="at">Graph =</span> graph_names[i], <span class="at">Slope =</span> slope))</span>
+<span id="cb53-17"><a href="http://localhost:7260/#cb53-17" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb53-18"><a href="http://localhost:7260/#cb53-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Print the slope table</span></span>
+<span id="cb53-19"><a href="http://localhost:7260/#cb53-19" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(slope_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>                                   Graph         Slope
 get(x_vars[i])   Back Injuries by Weight  0.0059664746
